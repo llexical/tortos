@@ -11,7 +11,7 @@ Credit:
 
 ## Setup OSX:
 - Setup your [cross compiler](https://github.com/cfenollosa/os-tutorial/tree/master/11-kernel-crosscompiler). If you don't know why take a quick look at: [Why do I need a cross compiler?](http://wiki.osdev.org/Why_do_I_need_a_Cross_Compiler%3F)
-    - the gcc mirror is out of date, so instead install: 
+    - NOTE: the gcc mirror is out of date, so instead install: 
     ```
     curl -O ftp://ftp.mirrorservice.org/sites/sourceware.org/pub/gcc/releases/gcc-4.9.1/gcc-4.9.1.tar.bz2
     ```
