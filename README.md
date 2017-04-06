@@ -17,7 +17,7 @@ Credit:
     ```
 - [Install Grub2 on OSX](http://wiki.osdev.org/GRUB#Installing_GRUB_2_on_OS_X), Grub2 is your bootloader.
 
-- `brew install xorriso` so you can build ISO's and run them.
+- `brew install xorriso qemu` so you can build & run ISO's
 
 - `make build` to compile, verify and build your ISO.
 
