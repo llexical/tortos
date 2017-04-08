@@ -80,7 +80,15 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
 }
  
 void terminal_putchar(char c) {
+	if(c == '\n') {
+		/* If new line, increment row and reset column */
+		++terminal_row;
+		terminal_column = 0;
+		return;
+	}
+
 	terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
+
 	if (++terminal_column == VGA_WIDTH) {
 		terminal_column = 0;
 		if (++terminal_row == VGA_HEIGHT)
@@ -105,5 +113,5 @@ void kernel_main(void) {
 	terminal_initialize();
  
 	/* Newline support is left as an exercise. */
-	terminal_writestring("Welcome to Tortos!\n");
+	terminal_writestring("Welcome to Tortos!\nHello!");
 }
