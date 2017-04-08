@@ -3,7 +3,7 @@
 #include <stdbool.h> /* C doesn't have booleans by default. */
 #include <stddef.h>
 #include <stdint.h>
- 
+
 /* Check if the compiler thinks we are targeting the wrong operating system. */
 #if defined(__linux__)
 #error "You are not using a cross-compiler, you will most certainly run into trouble"
@@ -60,7 +60,7 @@ uint16_t* terminal_buffer;
 void terminal_initialize(void) {
 	terminal_row = 0;
 	terminal_column = 0;
-	terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+	terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREEN, VGA_COLOR_BLACK);
 	terminal_buffer = (uint16_t*) 0xB8000;
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
@@ -81,18 +81,37 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
  
 void terminal_putchar(char c) {
 	if(c == '\n') {
-		/* If new line, increment row and reset column */
-		++terminal_row;
-		terminal_column = 0;
+		terminal_newline();
 		return;
 	}
 
 	terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
 
-	if (++terminal_column == VGA_WIDTH) {
-		terminal_column = 0;
-		if (++terminal_row == VGA_HEIGHT)
-			terminal_row = 0;
+	if (++terminal_column == VGA_WIDTH)
+		terminal_newline();
+}
+
+void terminal_newline() {
+	if ((terminal_row + 1) == VGA_HEIGHT) {
+		terminal_scroll();
+	} else {
+		terminal_row++;
+	}
+	terminal_column = 0;
+}
+
+void terminal_scroll() {
+	for (size_t y = 0; y < VGA_HEIGHT; y++) {
+		for (size_t x = 0; x < VGA_WIDTH; x++) {
+			const size_t index = y * VGA_WIDTH + x;
+
+			if ( y < (VGA_HEIGHT - 1)) {
+				const size_t next = (y + 1) * VGA_WIDTH + x;
+				terminal_buffer[index] = terminal_buffer[next];
+			} else {
+				terminal_buffer[index] = vga_entry(' ', terminal_color);
+			}
+		}
 	}
 }
  
@@ -113,5 +132,10 @@ void kernel_main(void) {
 	terminal_initialize();
  
 	/* Newline support is left as an exercise. */
-	terminal_writestring("Welcome to Tortos!\nHello!");
+	for (size_t i = 0; i < 25; i++)
+		terminal_writestring("Welcome to Tortos!\n");
+
+	terminal_writestring("Hello!\n");
+	terminal_writestring("1234567891011121314151dlkrjglskdjfgl;akjdl;gskjd;lfgkjsdfgdlkdsjglkdjfglskdjfglksjdflgksjdflgkjsdlfkgjsldfkgjlskdfg\n");
+	terminal_writestring("Final line here. Yes.\n");
 }
